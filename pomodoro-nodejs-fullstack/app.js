@@ -11,6 +11,7 @@ const setUser = require('./middleware/auth');
 var homeRouter = require('./routes/home');
 var authRouter = require('./routes/auth');
 var pomodoroRouter = require('./routes/pomodoro');
+var analysisRouter = require('./routes/analysis');
 
 var app = express();
 app.use(express.json());
@@ -53,6 +54,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', homeRouter);
 app.use('/auth', authRouter);
 app.use('/pomodoro', pomodoroRouter);
+app.use('/analysis', analysisRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

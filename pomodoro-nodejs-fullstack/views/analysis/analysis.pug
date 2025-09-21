@@ -1,0 +1,30 @@
+extends ../template
+
+block title
+    title StudyDoro - Analysis 
+
+block content 
+
+    if user 
+        script.
+            window.currentUser = !{JSON.stringify(user || null)};
+        .text-center
+            | Your Study Analysis with StudyDoro
+
+        .row.justify-content-center.mt-3
+            button.btn.btn-primary.m-1(onclick="fetchData('1D')") 1 Day
+            button.btn.btn-primary.m-1(onclick="fetchData('1W')") 1 Week
+            button.btn.btn-primary.m-1(onclick="fetchData('1M')") 1 Month
+            button.btn.btn-primary.m-1(onclick="fetchData('1Y')") 1 Year
+            button.btn.btn-primary.m-1(onclick="fetchData('AT')") All Time
+
+        #graphs.mt-5.container
+
+    else
+        .text-center
+            h2 
+            | Uh oh, looks like you have not logged in :(
+            br
+            img(src="/images/meme_2.jpg", alt="Meme", srcset="").mt-5.img-fluid.img-thumbnail
+
+    script(src="/javascripts/analysis.js") 

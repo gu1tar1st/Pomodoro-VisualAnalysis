@@ -24,7 +24,7 @@ html(lang="en")
         // Left side - Logo + Name
         a.navbar-brand.d-flex.align-items-center(href="/", style="text-decoration: none;")
           i.fas.fa-clock.fa-2x.me-2.text-primary
-          span.h4.mb-0.font-weight-bold.text-dark StudyMoro
+          span.h4.mb-0.font-weight-bold.text-dark StudyDoro
         
         // Center - Navigation Links
         button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav")
@@ -35,15 +35,15 @@ html(lang="en")
             li.nav-item
               a.nav-link.px-3(href="/pomodoro") Pomodoro
             li.nav-item
-              a.nav-link.px-3(href="#analysis") Analysis
+              a.nav-link.px-3(href="/analysis") Analysis
         
         // Right side - Login
         if !user
             .d-flex.align-items-center
                 .insta-default
-                    a(href="/auth/facebook")
-                        | Log in with Facebook 
-                        i.fas.fa-meta
+                    a(href="/auth/facebook" class="d-flex align-items-center gap-2")
+                        | Log in with Facebook
+                    i.bi.bi-facebook
         else
             .d-flex.align-items-center
                 a.btn.btn-outline-primary.btn-sm.me-2(href="/auth/logout") Logout
@@ -66,7 +66,7 @@ html(lang="en")
               li.mb-2
                 a.text-light-50(href="/pomodoro") Pomodoro
               li.mb-2
-                a.text-light-50(href="#") Analysis
+                a.text-light-50(href="/analysis") Analysis
               li.mb-2
                 a.text-light-50(href="#") Support
             
