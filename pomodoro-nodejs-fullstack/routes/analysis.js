@@ -1,3 +1,4 @@
+require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 const { spawn } = require('child_process');
@@ -24,7 +25,7 @@ router.post('/', async (req, res) => {
 
         // Prepare input for Python
         const inputData = JSON.stringify({ data: studies, timeframe });
-        const pyPath = "C:\\Users\\rysho\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" || "python3";
+        const pyPath = process.env.PyPath || "python3";
 
         // Spawn Python process
         const py = spawn(pyPath, ['./public/scripts/analysis.py']);
