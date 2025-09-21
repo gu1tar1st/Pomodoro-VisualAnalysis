@@ -1,0 +1,107 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+    block title
+
+    //Bootstrap 5
+    link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css", rel="stylesheet")
+    link(href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css", rel="stylesheet")
+
+    //Font families
+    link(href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap", rel="stylesheet")
+
+
+    //CSS
+    link(rel="stylesheet", href="/stylesheets/template.css")
+  
+  body
+    // Navbar
+    nav.navbar.navbar-expand-lg.navbar-light.bg-white.shadow-sm.border-bottom.sticky-top
+      .container
+        // Left side - Logo + Name
+        a.navbar-brand.d-flex.align-items-center(href="/", style="text-decoration: none;")
+          i.fas.fa-clock.fa-2x.me-2.text-primary
+          span.h4.mb-0.font-weight-bold.text-dark StudyMoro
+        
+        // Center - Navigation Links
+        button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav")
+          span.navbar-toggler-icon
+        
+        #navbarNav.collapse.navbar-collapse.justify-content-center
+          ul.navbar-nav
+            li.nav-item
+              a.nav-link.px-3(href="/pomodoro") Pomodoro
+            li.nav-item
+              a.nav-link.px-3(href="#analysis") Analysis
+        
+        // Right side - Login
+        if !user
+            .d-flex.align-items-center
+                .insta-default
+                    a(href="/auth/facebook")
+                        | Log in with Facebook 
+                        i.fas.fa-meta
+        else
+            .d-flex.align-items-center
+                a.btn.btn-outline-primary.btn-sm.me-2(href="/auth/logout") Logout
+    
+    // Main Content Area
+    main.main-content.py-5
+      .container
+        block content
+    
+    // Footer
+    footer.bg-dark.text-light.py-5
+      .container
+        .row.g-4
+          // First Column - Links
+          .col-lg-4.col-md-6
+            h5.mb-3 Links
+            ul.list-unstyled
+              li.mb-2
+                a.text-light-50(href="/") Home
+              li.mb-2
+                a.text-light-50(href="/pomodoro") Pomodoro
+              li.mb-2
+                a.text-light-50(href="#") Analysis
+              li.mb-2
+                a.text-light-50(href="#") Support
+            
+          // Second Column - About Us
+          .col-lg-4.col-md-6
+            h5.mb-3 About Us
+            p.text-light-50.small
+              | We're passionate about helping you boost productivity with our innovative Pomodoro timer and comprehensive analysis tools. 
+              br
+              | Our mission is to make focused work accessible and enjoyable for everyone.
+            //- .mt-3
+            //-   a.text-light-50.me-3(href="#")
+            //-     i.fas.fa-facebook.fa-lg
+            //-   a.text-light-50.me-3(href="#")
+            //-     i.fas.fa-twitter.fa-lg
+            //-   a.text-light-50.me-3(href="#")
+            //-     i.fas.fa-linkedin.fa-lg
+            //-   a.text-light-50(href="#")
+            //-     i.fas.fa-instagram.fa-lg
+          
+          // Third Column - Product For
+          .col-lg-4.col-md-12.text-center
+            h5.mb-3 Product For Hackathon
+            img.img-fluid.img-thumbnail(
+                src="/images/helloworld2025.jpg", 
+                alt="hackathon", 
+                style="max-width: 250px; height: auto; margin: 0 auto;"
+            )
+
+            //- .text-center.p-4.bg-secondary.bg-opacity-25.rounded
+            //-   .mb-3
+            //-     i.fas.fa-users.fa-3x.text-primary
+            //-   p.mb-0.text-light-50
+            //-     | Busy professionals, students, and anyone who wants to achieve more with focused work sessions
+            //-   small.text-muted 25+ countries served
+    
+    // Bootstrap JS
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js")

@@ -1,0 +1,345 @@
+extends ../template
+
+block title
+    title StudyMoro - Pomodoro session
+
+block content
+
+    if user 
+        script.
+            window.currentUser = !{JSON.stringify(user || null)};
+        .container-fluid.min-vh-100.d-flex.flex-column.justify-content-center
+            .row.justify-content-center
+                .col-lg-6.col-md-8.col-12
+                    // Control Buttons (visible before start)
+                    #preStartControls.text-center.mb-4
+                    .btn-group.d-flex.justify-content-center.gap-3.flex-wrap
+                        button#classic-btn.btn.btn-outline-primary(class="classic-btn px-4 py-2")
+                            i.fas.fa-clock.me-1
+                            | Classic (25 mins)
+                        button#customize-btn.btn.btn-outline-secondary(class="customize-btn px-4 py-2")
+                            i.fas.fa-cog.me-1
+                            | Customize
+                    
+                    // Customize Dropdown (hidden by default, properly positioned)
+                    .position-relative
+                        #customizeDropdown.dropdown-menu.w-100.p-4(position="static" style="display: none; border: none; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15); border-radius: 0.5rem; background: #fff;")
+                            form#customizeForm
+                                .row.g-3
+                                    .col-12
+                                        label.form-label(for="purposeInput") 
+                                            | Purpose *
+                                            small.text-muted  What are you working on?
+                                        input#purposeInput.form-control(type="text", placeholder="Math homework, reading, coding...", required)
+                                    
+                                    .col-12
+                                        label.form-label(for="durationInput") 
+                                            | Duration (minutes) *
+                                            small.text-muted  Minimum 10 minutes
+                                        input#durationInput.form-control(type="number", min="10", value="25", required)
+                                    
+                                    //- .col-12
+                                    //-     label.form-label(for="bgInput") Background Image URL
+                                    //-     small.text-muted  Optional - for visual enhancement
+                                    //-     input#bgInput.form-control(type="url", placeholder="https://example.com/image.jpg")
+                                    
+                                    .col-md-6
+                                        label.form-label(for="fontInput") Font Family
+                                        select#fontInput.form-select
+                                            option(value="Arial, sans-serif") Arial
+                                            option(value="Times New Roman, serif") Times New Roman
+                                            option(value="Georgia, serif") Georgia
+                                            option(value="Helvetica, sans-serif") Helvetica
+                                            option(value="Verdana, sans-serif") Verdana
+                                            option(value="Roboto, sans-serif") Roboto
+                                            option(value="Open Sans, sans-serif" selected) Open Sans
+                                            option(value="Montserrat, sans-serif") Montserrat
+                                    
+                                    .col-md-6
+                                        label.form-label(for="weightInput") Font Weight
+                                        select#weightInput.form-select
+                                            option(value="normal") Normal
+                                            option(value="bold" selected) Bold
+                                            option(value="lighter") Lighter
+                                            option(value="bolder") Bolder
+                                            option(value="300") 300
+                                            option(value="400") 400
+                                            option(value="500") 500
+                                            option(value="700") 700
+                                            option(value="900") 900
+                                    
+                                    .col-12
+                                        label.form-label(for="cycleInput") 
+                                            | Cycles *
+                                            small.text-muted  Number of study intervals (divides duration equally)
+                                        input#cycleInput.form-control(type="number", min="1", value="1", required)
+                                    
+                                    .col-12
+                                        label.form-label(for="breakDurationInput") 
+                                            | Break Duration (minutes) *
+                                            small.text-muted  Break time after each cycle except the last
+                                        input#breakDurationInput.form-control(type="number", min="1", value="5", required)
+                                    
+                                    .col-12
+                                        .d-flex.justify-content-end.gap-2
+                                            button#cancelCustomize.btn.btn-outline-secondary(type="button") Cancel
+                                            button#saveCustomize.btn.btn-primary(type="button") Save Settings
+                    
+                    // Date Display
+                    .text-center.mb-3.mt-3
+                        .h6.text-muted#currentDate
+                            | #{new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
+                    
+                    // Main Timer Display
+                    .timer-container.position-relative.mb-4
+                        .timer-display#timerDisplay.p-4.text-center
+                            span.h1.display-1.fw-bold#timerText 00:00:00
+                            // Background Image Container
+                            .timer-bg.position-absolute.top-0.start-0.end-0.bottom-0.d-none(id="timerBg")
+                            // Study Notes Popup (only visible during session)
+                            #studyNotesPopup.position-absolute.top-100.start-50.translate-middle-x.d-none(
+                                style="z-index: 1060; margin-top: 1rem;"
+                            )
+                            .card.shadow-lg.border-0(style="width: 90vw; max-width: 500px;")
+                                .card-header.d-flex.justify-content-between.align-items-center.bg-primary.text-white.p-3
+                                    h6.mb-0 
+                                        i.fas.fa-sticky-note.me-1
+                                        | Study Notes
+                                    button#closeNotesBtn.btn-close.btn-close-white(type="button")
+                                .card-body.p-3
+                                    textarea#notesTextarea.form-control(rows="4", placeholder="Jot down your thoughts, insights, or what you're learning...")
+                                //- .card-footer.bg-light.border-0.p-3
+                                //-     .d-flex.justify-content-between
+                                //-         button#minimizeNotes.btn.btn-sm.btn-outline-secondary
+                                //-             i.fas.fa-minus.me-1
+                                //-             |  Minimize
+                                //-         button#saveNotesBtn.btn.btn-sm.btn-primary
+                                //-             i.fas.fa-save.me-1
+                                //-             |  Save Note
+                    
+                    // Control Buttons (visible before start)
+                    #preStartActionButtons.text-center.mt-3
+                        .btn-group.gap-3
+                            button#startBtn.btn.btn-success.btn-lg(class="start-btn")
+                                i.fas.fa-play.me-2
+                                |  Start Session
+                    
+                    // Session Controls (visible during session - hidden initially)
+                    #sessionControls.d-none.mt-4
+                        .text-center
+                            .btn-group.gap-2
+                            button#stopBtn.btn.btn-danger.btn-lg.mr-3(class="stop-btn")
+                                i.fas.fa-stop.me-2
+                                |  Pause
+                            button#resetBtn.btn.btn-warning.btn-lg(class="reset-btn")
+                                i.fas.fa-undo.me-2
+                                |  Reset
+                    
+                    // Session Info
+                    #sessionInfo.alert.alert-info.d-none.mt-3
+                        .row.align-items-center
+                            .col-md-8
+                                strong#purposeText 
+                                    i.fas.fa-bookmark.me-1
+                                    | Studying...
+                            .col-md-4.text-md-end
+                                span#cycleCounter.badge.bg-primary Cycle 1 of 1
+                    
+                    // Full Screen Overlay (covers everything during session)
+                    #fullscreenOverlay.position-fixed.top-0.start-0.w-100.h-100.d-none(
+                        style="z-index: 1050; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"
+                    )
+                        .d-flex.flex-column.align-items-center.justify-content-center.h-100.p-3
+                            // Timer in full screen mode
+                            .text-center.mb-4
+                            .timer-fullscreen.p-4.rounded-3
+                                span.h2#fullscreenTimerText 00:00:00
+                            #fullscreenSessionInfo.alert.alert-light.d-none.mt-3
+                                .row.text-center
+                                    .col-8
+                                        strong#fullscreenPurposeText Studying...
+                                    .col-4
+                                        span#fullscreenCycleCounter Cycle 1 of 1
+                            
+                            // Fullscreen Controls
+                            .btn-group.gap-2
+                            button#showNotesFullscreen.btn.btn-outline-light.btn-sm
+                                i.fas.fa-sticky-note.me-1
+                                | Notes
+                            button#exitFullscreen.btn.btn-outline-light.btn-sm
+                                i.fas.fa-expand-arrows-alt.me-1
+                                | Exit
+
+            // Completion Modal
+            #completionModal.modal.fade(tabindex="-1")
+                .modal-dialog.modal-lg
+                .modal-content
+                    .modal-header.bg-success.text-white
+                        h5.modal-title 
+                            i.fas.fa-check-circle.me-2
+                            | Session Complete! 🎉
+                        button.close(type="button", data-bs-dismiss="modal")
+                            span.d-none  Close
+                    .modal-body
+                        .text-center.mb-4
+                            i.fas.fa-trophy.fa-4x.text-success.mb-3
+                                h4 Great job completing your session!
+                        .row.g-3
+                            .col-12
+                                h6 Session Summary
+                            .card.border-0.bg-light
+                                .card-body.p-3
+                                    .row
+                                        .col-sm-6.mb-2
+                                            strong Purpose: 
+                                            span#completionPurpose.text-primary Studying...
+                                        .col-sm-6.mb-2
+                                            strong Planned: 
+                                            span#completionDuration.text-success 25 minutes
+                                        .col-sm-6.mb-2
+                                            strong Actual: 
+                                            span#completionActual.text-info 25 minutes
+                                        .col-sm-6.mb-2
+                                            strong Cycles: 
+                                            span#completionCycles.text-warning 1 of 1 completed
+                            .col-12
+                                label.form-label Quick Notes (optional)
+                                textarea#finalNotesInput.form-control(rows="3", placeholder="What did you accomplish? Any insights?")
+                    .modal-footer.justify-content-center.gap-2
+                        button#saveFinalSession.btn.btn-success 
+                            i.fas.fa-save.me-1
+                            | Save Session
+                        button.btn.btn-outline-secondary(data-bs-dismiss="modal") Close
+
+        // Clean Custom Styles
+        style.
+            :root {
+                --timer-font-family: 'Open Sans', sans-serif;
+                --timer-font-weight: bold;
+            }
+            
+            .timer-container {
+                min-height: 250px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .timer-display {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                transition: all 0.3s ease;
+                width: 100%;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .timer-bg {
+                background-size: cover;
+                background-position: center;
+                opacity: 0.2;
+            }
+            
+            .timer-container.running .timer-display {
+                box-shadow: 0 0 30px rgba(40, 167, 69, 0.4);
+                animation: pulse 2s infinite;
+            }
+            
+            @keyframes pulse {
+                0%, 100% { 
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+                    transform: scale(1);
+                }
+                50% { 
+                    box-shadow: 0 0 30px rgba(40, 167, 69, 0.4); 
+                    transform: scale(1.02);
+                }
+            }
+            
+            #timerText, #fullscreenTimerText {
+                font-family: var(--timer-font-family);
+                font-weight: var(--timer-font-weight);
+                letter-spacing: 2px;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                display: block;
+            }
+            
+            .timer-fullscreen {
+                background: rgba(255,255,255,0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.2);
+                color: white;
+            }
+            
+            .form-label {
+                font-weight: 600;
+                color: #495057;
+                margin-bottom: 0.25rem;
+            }
+            
+            .btn-group .btn {
+                min-width: 120px;
+                border-radius: 0.375rem;
+            }
+            
+            #customizeDropdown {
+                margin-top: 0.5rem;
+                max-height: 500px;
+                overflow-y: auto;
+            }
+            
+            .btn:focus, .btn:active {
+                box-shadow: none !important;
+            }
+            
+            .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            }
+            
+            @media (max-width: 768px) {
+                .timer-display {
+                    border-radius: 15px;
+                    padding: 2rem 1rem;
+                }
+                
+                #timerText {
+                    font-size: 3rem !important;
+                    letter-spacing: 1px;
+                }
+                
+                .btn-group .btn {
+                    min-width: 100px;
+                    font-size: 0.875rem;
+                    padding: 0.5rem 1rem;
+                }
+                
+                .gap-3 {
+                    gap: 0.75rem;
+                }
+                
+                #studyNotesPopup .card {
+                    width: 95vw !important;
+                    max-width: none;
+                }
+                
+                .btn-group.d-flex {
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+            
+            body.fullscreen-active {
+                overflow: hidden;
+            }
+
+        // Fixed JavaScript
+        script(src="/javascripts/pomodoro.js") 
+    else 
+        .text-center
+            h2 
+            | Uh oh, looks like you have not logged in :(
+            br
+            img(src="/images/meme_1.jpg", alt="Meme", srcset="").mt-5

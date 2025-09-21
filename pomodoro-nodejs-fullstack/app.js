@@ -1,13 +1,44 @@
 var createError = require('http-errors');
+var passport = require('passport');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const setUser = require('./middleware/auth');
+
+var homeRouter = require('./routes/home');
+var authRouter = require('./routes/auth');
+var pomodoroRouter = require('./routes/pomodoro');
 
 var app = express();
+app.use(express.json());
+require('dotenv').config();
+
+
+/* 
+Connect database
+*/
+const mongoose = require('mongoose')
+const uri = process.env.MONGODB_URI;
+mongoose.connect(uri).then(() => {
+  console.log('✅ Connected to MongoDB:', mongoose.connection.name);
+}).catch((err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
+
+// Session setup
+app.use(session({
+  secret: process.env.sessionSecret,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(setUser);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,8 +50,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/', homeRouter);
+app.use('/auth', authRouter);
+app.use('/pomodoro', pomodoroRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

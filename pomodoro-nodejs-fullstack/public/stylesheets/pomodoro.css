@@ -1,0 +1,113 @@
+:root {
+      --timer-font-family: 'Open Sans', sans-serif;
+      --timer-font-weight: bold;
+    }
+    
+    .timer-container {
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .timer-display {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 40px;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      width: 100%;
+      position: relative;
+    }
+    
+    .timer-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: cover;
+      background-position: center;
+      border-radius: 25px;
+      z-index: -1;
+      opacity: 0.2;
+    }
+    
+    .timer-container.running .timer-display {
+      box-shadow: 0 0 40px rgba(40, 167, 69, 0.6);
+      transform: scale(1.01);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 40px rgba(40, 167, 69, 0.6); }
+      50% { box-shadow: 0 0 60px rgba(40, 167, 69, 0.8); }
+      100% { box-shadow: 0 0 40px rgba(40, 167, 69, 0.6); }
+    }
+    
+    #timerText, #fullscreenTimerText {
+      font-family: var(--timer-font-family);
+      font-weight: var(--timer-font-weight);
+      letter-spacing: 3px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+    }
+    
+    .timer-fullscreen {
+      background: rgba(255,255,255,0.1);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      padding: 30px 50px;
+      border-radius: 20px;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    #studyNotesPopup {
+      transition: all 0.3s ease;
+    }
+    
+    #studyNotesPopup.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    
+    .btn-group .btn {
+      min-width: 120px;
+    }
+    
+    @media (max-width: 768px) {
+      .timer-display {
+        padding: 40px 20px;
+        border-radius: 15px;
+      }
+      
+      #timerText {
+        font-size: 3rem;
+        letter-spacing: 1px;
+      }
+      
+      .btn-group .btn {
+        min-width: 100px;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+      
+      .gap-3 {
+        gap: 0.75rem;
+      }
+      
+      #studyNotesPopup .card {
+        width: 95vw;
+        max-width: none;
+      }
+    }
+    
+    #fullscreenOverlay {
+      transition: opacity 0.3s ease;
+    }
+    
+    body.fullscreen-active {
+      overflow: hidden;
+    }
