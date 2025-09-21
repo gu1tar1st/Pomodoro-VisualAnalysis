@@ -32,6 +32,5 @@ Henry Vu (gu1tar1st)
 
 ## Version History
 
-* 0.1
-* * Initial Release
+* 0.1- Initial Release
 
