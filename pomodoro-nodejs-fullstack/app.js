@@ -32,11 +32,15 @@ mongoose.connect(uri).then(() => {
 
 // Session setup
 app.use(session({
-  secret: process.env.sessionSecret,
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000 } // 1 day
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: true,            // force HTTPS cookies on Render
+    sameSite: 'lax'          // allow OAuth redirects to keep the cookie
+  }
 }));
 
 app.use(passport.initialize());
