@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
+const MongoStore = require('connect-mongo');
 
 const setUser = require('./middleware/auth');
 
@@ -31,9 +32,11 @@ mongoose.connect(uri).then(() => {
 
 // Session setup
 app.use(session({
-  secret: process.env.sessionSecret,
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000 } // 1 day
 }));
 
 app.use(passport.initialize());
