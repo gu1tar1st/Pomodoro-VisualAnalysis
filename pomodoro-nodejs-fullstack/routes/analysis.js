@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 
         // Prepare input for Python
         const inputData = JSON.stringify({ data: studies, timeframe });
-        const pyPath = 'C:\\Users\\rysho\\AppData\\Local\\Programs\\Python\\Python312\\python.exe';
+        const pyPath = "C:\\Users\\rysho\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" || "python3";
 
         // Spawn Python process
         const py = spawn(pyPath, ['./public/scripts/analysis.py']);
