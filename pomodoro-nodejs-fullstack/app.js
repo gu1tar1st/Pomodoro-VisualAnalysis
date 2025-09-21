@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var passport = require('passport');
 var express = require('express');
@@ -16,7 +17,6 @@ var analysisRouter = require('./routes/analysis');
 
 var app = express();
 app.use(express.json());
-require('dotenv').config();
 
 
 /* 
@@ -35,7 +35,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000 } // 1 day
 }));
 
