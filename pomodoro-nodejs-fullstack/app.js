@@ -32,7 +32,7 @@ mongoose.connect(uri).then(() => {
 
 // Session setup
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.sessionSecret,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
